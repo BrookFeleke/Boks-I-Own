@@ -1,0 +1,6 @@
+{
+  "name": "Books I Own",
+  "description": "A visually striking personal book collection database and analytics dashboard featuring retro-vintage styling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
