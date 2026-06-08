@@ -102,6 +102,14 @@ export const AddBookPage: React.FC<AddBookPageProps> = ({
       setAuthor(sug.suggestedValue);
     } else if (sug.field === 'AuthorNationality') {
       setNationality(sug.suggestedValue);
+    } else if (sug.field === 'ContentType') {
+      const typeVal = sug.suggestedValue as 'Fiction' | 'Non-Fiction';
+      setContentType(typeVal);
+      if (typeVal === 'Non-Fiction') {
+        setWorkType('Scientific Treatise');
+      } else {
+        setWorkType('Novel');
+      }
     } else if (sug.field === 'PublishedYear') {
       setPubYear(String(sug.suggestedValue));
     } else if (sug.field === 'PageCount') {
@@ -268,7 +276,15 @@ export const AddBookPage: React.FC<AddBookPageProps> = ({
                 <label className="block text-xs font-mono font-black uppercase text-black">Content Split</label>
                 <select
                   value={contentType}
-                  onChange={e => setContentType(e.target.value as 'Fiction' | 'Non-Fiction')}
+                  onChange={e => {
+                    const val = e.target.value as 'Fiction' | 'Non-Fiction';
+                    setContentType(val);
+                    if (val === 'Non-Fiction') {
+                      setWorkType('Scientific Treatise');
+                    } else {
+                      setWorkType('Novel');
+                    }
+                  }}
                   className="w-full border-4 border-black bg-white p-2 text-xs font-black rounded-none focus:outline-none focus:bg-[#FFF7E8]"
                 >
                   <option value="Fiction">Fiction</option>
