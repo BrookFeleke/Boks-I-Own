@@ -30,7 +30,7 @@ interface LibraryPageProps {
 }
 
 type ViewMode = 'grid' | 'table';
-type SortField = 'Title' | 'PublishedYear' | 'PageCount' | 'BookID';
+type SortField = 'Title' | 'PublishedYear' | 'PageCount' | 'BookID' | 'Author' | 'ReadStatus' | 'Condition';
 type SortOrder = 'asc' | 'desc';
 
 export const LibraryPage: React.FC<LibraryPageProps> = ({
@@ -47,6 +47,9 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
   const [selectedPeriod, setSelectedPeriod] = useState('');
   const [selectedPublisher, setSelectedPublisher] = useState('');
   const [selectedNationality, setSelectedNationality] = useState('');
+  const [selectedReadStatus, setSelectedReadStatus] = useState('');
+  const [selectedFormat, setSelectedFormat] = useState('');
+  const [selectedCondition, setSelectedCondition] = useState('');
 
   // Sorter State
   const [sortField, setSortField] = useState<SortField>('Title');
@@ -80,6 +83,9 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
     const matchesPeriod = selectedPeriod ? book.LiteraryPeriod === selectedPeriod : true;
     const matchesPublisher = selectedPublisher ? book.Publisher === selectedPublisher : true;
     const matchesNationality = selectedNationality ? book.AuthorNationality === selectedNationality : true;
+    const matchesReadStatus = selectedReadStatus ? book.ReadStatus === selectedReadStatus : true;
+    const matchesFormat = selectedFormat ? book.Format === selectedFormat : true;
+    const matchesCondition = selectedCondition ? book.Condition === selectedCondition : true;
 
     // Filter by genre needs digging into the joint BookGenres
     let matchesGenre = true;
@@ -88,7 +94,15 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
       matchesGenre = bGenres.some(bg => bg.Genre === selectedGenre);
     }
 
-    return matchesSearch && matchesContent && matchesPeriod && matchesPublisher && matchesNationality && matchesGenre;
+    return matchesSearch && 
+           matchesContent && 
+           matchesPeriod && 
+           matchesPublisher && 
+           matchesNationality && 
+           matchesGenre && 
+           matchesReadStatus && 
+           matchesFormat && 
+           matchesCondition;
   });
 
   // 2. Sort Logic
@@ -103,6 +117,12 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
       comparison = (a.PageCount || 0) - (b.PageCount || 0);
     } else if (sortField === 'BookID') {
       comparison = a.BookID.localeCompare(b.BookID);
+    } else if (sortField === 'Author') {
+      comparison = a.Author.localeCompare(b.Author);
+    } else if (sortField === 'ReadStatus') {
+      comparison = a.ReadStatus.localeCompare(b.ReadStatus);
+    } else if (sortField === 'Condition') {
+      comparison = a.Condition.localeCompare(b.Condition);
     }
 
     return sortOrder === 'asc' ? comparison : -comparison;
@@ -114,7 +134,10 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
     (selectedGenre ? 1 : 0) + 
     (selectedPeriod ? 1 : 0) + 
     (selectedPublisher ? 1 : 0) + 
-    (selectedNationality ? 1 : 0);
+    (selectedNationality ? 1 : 0) +
+    (selectedReadStatus ? 1 : 0) +
+    (selectedFormat ? 1 : 0) +
+    (selectedCondition ? 1 : 0);
 
   const resetAllFilters = () => {
     setSearchQuery('');
@@ -123,6 +146,9 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
     setSelectedPeriod('');
     setSelectedPublisher('');
     setSelectedNationality('');
+    setSelectedReadStatus('');
+    setSelectedFormat('');
+    setSelectedCondition('');
   };
 
   return (
@@ -233,6 +259,57 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
               </select>
             </div>
 
+            {/* Filter 6: Read Status */}
+            <div>
+              <label className="block text-[10px] font-mono font-black uppercase tracking-wider text-black mb-1.5">
+                Reading Status
+              </label>
+              <select
+                value={selectedReadStatus}
+                onChange={e => setSelectedReadStatus(e.target.value)}
+                className="w-full border-4 border-black bg-white px-2.5 py-1.5 font-mono text-xs font-black rounded-none focus:outline-none focus:bg-[#FFF7E8]"
+              >
+                <option value="">-- All status --</option>
+                <option value="Read">Read</option>
+                <option value="Unread">Unread</option>
+              </select>
+            </div>
+
+            {/* Filter 7: Format */}
+            <div>
+              <label className="block text-[10px] font-mono font-black uppercase tracking-wider text-black mb-1.5">
+                Physical Format
+              </label>
+              <select
+                value={selectedFormat}
+                onChange={e => setSelectedFormat(e.target.value)}
+                className="w-full border-4 border-black bg-white px-2.5 py-1.5 font-mono text-xs font-black rounded-none focus:outline-none focus:bg-[#FFF7E8]"
+              >
+                <option value="">-- All formats --</option>
+                <option value="Paperback">Paperback</option>
+                <option value="Hardback">Hardback</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            {/* Filter 8: Condition */}
+            <div>
+              <label className="block text-[10px] font-mono font-black uppercase tracking-wider text-black mb-1.5">
+                Volume Condition
+              </label>
+              <select
+                value={selectedCondition}
+                onChange={e => setSelectedCondition(e.target.value)}
+                className="w-full border-4 border-black bg-white px-2.5 py-1.5 font-mono text-xs font-black rounded-none focus:outline-none focus:bg-[#FFF7E8]"
+              >
+                <option value="">-- All conditions --</option>
+                <option value="Like New">Like New</option>
+                <option value="Good">Good</option>
+                <option value="Fair">Fair</option>
+                <option value="Poor">Poor</option>
+              </select>
+            </div>
+
           </div>
         </div>
 
@@ -288,27 +365,28 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
 
             {/* Sorter triggers dropdown */}
             <div className="flex items-center gap-1.5 font-mono text-xs">
-              <span className="text-black font-black uppercase hidden md:inline ml-2">Sort:</span>
-              <button
-                id="sort-toggle-title"
-                onClick={() => handleSortChange('Title')}
-                className={`px-2.5 py-2 border-4 border-black text-[10px] font-black uppercase tracking-wider flex items-center gap-1 cursor-pointer transition-all duration-100 ${sortField === 'Title' ? 'bg-[#FFD700]' : 'bg-white hover:bg-gray-50'}`}
+              <span className="text-black font-black uppercase hidden md:inline ml-2">Sort by:</span>
+              <select
+                id="sort-field-select"
+                value={sortField}
+                onChange={e => setSortField(e.target.value as SortField)}
+                className="border-4 border-black bg-white px-2.5 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider rounded-none focus:outline-none focus:bg-[#FFF7E8]"
               >
-                title {sortField === 'Title' && (sortOrder === 'asc' ? '↑' : '↓')}
-              </button>
+                <option value="Title">Title</option>
+                <option value="Author">Author</option>
+                <option value="PublishedYear">Pub Year</option>
+                <option value="PageCount">Pages</option>
+                <option value="BookID">Slot ID</option>
+                <option value="ReadStatus">Read Status</option>
+                <option value="Condition">Condition</option>
+              </select>
               <button
-                id="sort-toggle-year"
-                onClick={() => handleSortChange('PublishedYear')}
-                className={`px-2.5 py-2 border-4 border-black text-[10px] font-black uppercase tracking-wider flex items-center gap-1 cursor-pointer transition-all duration-100 ${sortField === 'PublishedYear' ? 'bg-[#FFD700]' : 'bg-white hover:bg-gray-50'}`}
+                id="sort-direction-toggle"
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                className="px-2.5 py-1.5 border-4 border-black text-[10px] bg-white hover:bg-[#FFF7E8] font-black uppercase tracking-wider cursor-pointer"
+                title="Toggle Sorting Direction"
               >
-                year {sortField === 'PublishedYear' && (sortOrder === 'asc' ? '↑' : '↓')}
-              </button>
-              <button
-                id="sort-toggle-pages"
-                onClick={() => handleSortChange('PageCount')}
-                className={`px-2.5 py-2 border-4 border-black text-[10px] font-black uppercase tracking-wider flex items-center gap-1 cursor-pointer transition-all duration-100 ${sortField === 'PageCount' ? 'bg-[#FFD700]' : 'bg-white hover:bg-gray-50'}`}
-              >
-                pages {sortField === 'PageCount' && (sortOrder === 'asc' ? '↑' : '↓')}
+                {sortOrder === 'asc' ? '↑ ASC' : '↓ DESC'}
               </button>
             </div>
 

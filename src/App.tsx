@@ -14,6 +14,7 @@ import { BookDetailPage } from './pages/BookDetailPage';
 import { AddBookPage } from './pages/AddBookPage';
 import { AnalysisPage } from './pages/AnalysisPage';
 import { TaxonomyPage } from './pages/TaxonomyPage';
+import { AuthorsPage } from './pages/AuthorsPage';
 import { Book, TaxonomyLists, BookGenre } from './types';
 import { Check, ShieldCheck, RefreshCcw, Download } from 'lucide-react';
 
@@ -282,6 +283,14 @@ export default function App() {
                 taxonomies={taxonomies}
                 onViewBook={(id) => setSelectedBookID(id)}
                 onNavigateToAddBook={() => setIsAddingBook(true)}
+              />
+            )}
+
+            {activeTab === 'authors' && (
+              <AuthorsPage
+                books={books}
+                bookGenres={bookGenres}
+                onViewBook={(id) => setSelectedBookID(id)}
               />
             )}
 

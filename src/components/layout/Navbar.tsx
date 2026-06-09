@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { BookOpen, BarChart3, Database, LogOut, Sliders, FolderSearch, Download, RefreshCcw } from 'lucide-react';
+import { BookOpen, BarChart3, Database, LogOut, Sliders, FolderSearch, Download, RefreshCcw, Users } from 'lucide-react';
 import { CatalogRepo } from '../../storage/db';
 import { LocalDB } from '../../storage/localStorageAdapter';
 
@@ -28,6 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const tabs = [
     { id: 'dashboard', label: 'Library Stats', icon: BarChart3 },
     { id: 'library', label: 'My Bookshelf', icon: FolderSearch },
+    { id: 'authors', label: 'Author Profiles', icon: Users },
     { id: 'analysis', label: 'Reading Trends', icon: Database },
     { id: 'taxonomies', label: 'Genre & Options', icon: Sliders }
   ];
