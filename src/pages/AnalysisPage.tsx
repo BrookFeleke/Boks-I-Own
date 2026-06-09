@@ -28,6 +28,7 @@ interface AnalysisPageProps {
   bookGenres: BookGenre[];
   onViewBook: (bookId: string) => void;
   onNavigateToTaxonomies: () => void;
+  onViewAuthor?: (author: string) => void;
 }
 
 type ActiveSection = 'identity' | 'history' | 'genres' | 'publishers' | 'physical' | 'quality';
@@ -36,7 +37,8 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
   books,
   bookGenres,
   onViewBook,
-  onNavigateToTaxonomies
+  onNavigateToTaxonomies,
+  onViewAuthor
 }) => {
   const [activeSection, setActiveSection] = useState<ActiveSection>('identity');
 
@@ -177,9 +179,14 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
                       <div className="absolute top-0 left-0 bg-black text-white font-mono text-[10px] w-6 h-6 flex items-center justify-center font-black">
                         #{idx + 1}
                       </div>
-                      <div className="text-xs font-black text-black mt-4 truncate" title={auth.name}>
+                      <button 
+                        type="button"
+                        onClick={() => onViewAuthor?.(auth.name)}
+                        className="text-xs font-black text-black hover:text-[#FF4500] underline mt-4 truncate focus:outline-none block w-full text-center"
+                        title={`View ${auth.name}'s profile`}
+                      >
                         {auth.name}
-                      </div>
+                      </button>
                       <div className="font-mono text-[10px] font-black text-[#FF4500] mt-2">
                         {auth.count} works owned
                       </div>
@@ -218,7 +225,20 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
                     >
                       <div className="truncate flex-1">
                         <strong className="text-xs text-gray-900 uppercase truncate block">{b.Title}</strong>
-                        <span className="text-[10px] text-gray-500 font-sans">{b.Author}</span>
+                        <span className="text-[10px] text-gray-500 font-sans">
+                          by{' '}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onViewAuthor?.(b.Author);
+                            }}
+                            className="hover:text-[#FF4500] underline font-bold cursor-pointer focus:outline-none"
+                            title={`View ${b.Author}'s profile`}
+                          >
+                            {b.Author}
+                          </button>
+                        </span>
                       </div>
                       <span className="font-mono text-xs font-black bg-yellow-300 border border-black py-0.5 px-2">
                         {StatsService.formatYear(b.PublishedYear)}
@@ -242,7 +262,20 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
                     >
                       <div className="truncate flex-1">
                         <strong className="text-xs text-gray-900 uppercase truncate block">{b.Title}</strong>
-                        <span className="text-[10px] text-gray-500 font-sans">{b.Author}</span>
+                        <span className="text-[10px] text-gray-500 font-sans">
+                          by{' '}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onViewAuthor?.(b.Author);
+                            }}
+                            className="hover:text-[#FF4500] underline font-bold cursor-pointer focus:outline-none"
+                            title={`View ${b.Author}'s profile`}
+                          >
+                            {b.Author}
+                          </button>
+                        </span>
                       </div>
                       <span className="font-mono text-xs font-black bg-blue-300 border border-black py-0.5 px-2">
                         {StatsService.formatYear(b.PublishedYear)}

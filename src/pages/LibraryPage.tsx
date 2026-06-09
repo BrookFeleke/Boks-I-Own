@@ -27,6 +27,7 @@ interface LibraryPageProps {
   taxonomies: TaxonomyLists;
   onViewBook: (bookId: string) => void;
   onNavigateToAddBook: () => void;
+  onViewAuthor?: (author: string) => void;
 }
 
 type ViewMode = 'grid' | 'table';
@@ -38,7 +39,8 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
   bookGenres,
   taxonomies,
   onViewBook,
-  onNavigateToAddBook
+  onNavigateToAddBook,
+  onViewAuthor
 }) => {
   // Filters State
   const [searchQuery, setSearchQuery] = useState('');
@@ -462,7 +464,19 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
                       {book.Title}
                     </h3>
                     <p className="text-xs font-bold text-black mt-0.5">
-                      by <strong className="font-extrabold">{book.Author}</strong> ({book.AuthorNationality})
+                      by{' '}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onViewAuthor?.(book.Author);
+                        }}
+                        className="font-extrabold hover:text-[#FF4500] underline bg-transparent border-none p-0 cursor-pointer focus:outline-none"
+                        title={`View ${book.Author}'s profile`}
+                      >
+                        {book.Author}
+                      </button>{' '}
+                      ({book.AuthorNationality})
                     </p>
 
                     {/* Metadata summary grid */}
@@ -543,7 +557,20 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
                     >
                       <td className="p-3 border-r-4 border-black font-mono font-black text-[#FF4500]">{book.BookID}</td>
                       <td className="p-3 border-r-4 border-black font-black uppercase tracking-tight text-black truncate max-w-[200px]">{book.Title}</td>
-                      <td className="p-3 border-r-4 border-black font-sans">{book.Author} ({book.AuthorNationality})</td>
+                      <td className="p-3 border-r-4 border-black font-sans">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onViewAuthor?.(book.Author);
+                          }}
+                          className="font-bold hover:text-[#FF4500] underline bg-transparent border-none p-0 cursor-pointer text-left focus:outline-none"
+                          title={`View ${book.Author}'s profile`}
+                        >
+                          {book.Author}
+                        </button>{' '}
+                        ({book.AuthorNationality})
+                      </td>
                       <td className="p-3 border-r-4 border-black max-w-[150px] truncate">
                         <span className="font-mono text-[9px] bg-[#FFD700] border-2 border-black font-black px-1.5 py-0.5 rounded-none mr-1.5 uppercase tracking-wide">
                           {prim || book.PrimaryGenre}

@@ -25,19 +25,26 @@ interface AuthorsPageProps {
   books: Book[];
   bookGenres: BookGenre[];
   onViewBook: (bookId: string) => void;
+  selectedAuthorName?: string | null;
+  onSelectAuthorName?: (authorName: string | null) => void;
 }
 
 export const AuthorsPage: React.FC<AuthorsPageProps> = ({
   books,
   bookGenres,
-  onViewBook
+  onViewBook,
+  selectedAuthorName = null,
+  onSelectAuthorName
 }) => {
   // Page search and filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNationality, setSelectedNationality] = useState('');
   
   // Drill-down author selection state
-  const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
+  const [localSelectedAuthor, setLocalSelectedAuthor] = useState<string | null>(null);
+
+  const selectedAuthor = onSelectAuthorName ? selectedAuthorName : localSelectedAuthor;
+  const setSelectedAuthor = onSelectAuthorName ? onSelectAuthorName : setLocalSelectedAuthor;
 
   // Helper: group books by author
   const authorGroups = React.useMemo(() => {

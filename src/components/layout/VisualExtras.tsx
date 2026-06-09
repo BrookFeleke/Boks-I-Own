@@ -11,9 +11,10 @@ import { StatsService } from '../../services/statsService';
 interface ExtrasProps {
   books: Book[];
   bookGenres: BookGenre[];
+  onViewAuthor?: (author: string) => void;
 }
 
-export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
+export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres, onViewAuthor }) => {
   if (!books || books.length === 0) return null;
 
   // 1. Library DNA Computing
@@ -203,7 +204,14 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
                 <div className="border-2 border-black bg-[#ADD8E6] p-3 shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
                   <div className="text-xs font-black uppercase truncate text-black">{longestBook.Title}</div>
                   <div className="flex justify-between font-mono text-[10px] text-black mt-1 font-bold">
-                    <span>{longestBook.Author}</span>
+                    <button 
+                      type="button" 
+                      onClick={() => onViewAuthor?.(longestBook.Author)} 
+                      className="hover:text-[#FF4500] underline font-bold cursor-pointer text-left focus:outline-none"
+                      title={`View ${longestBook.Author}'s profile`}
+                    >
+                      {longestBook.Author}
+                    </button>
                     <span className="font-black bg-white px-1 border border-black">{longestBook.PageCount} PGS</span>
                   </div>
                 </div>
@@ -220,7 +228,14 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
                 <div className="border-2 border-black bg-[#FF7F50] p-3 shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
                   <div className="text-xs font-black uppercase truncate text-black">{shortestBook.Title}</div>
                   <div className="flex justify-between font-mono text-[10px] text-black mt-1 font-bold">
-                    <span>{shortestBook.Author}</span>
+                    <button 
+                      type="button" 
+                      onClick={() => onViewAuthor?.(shortestBook.Author)} 
+                      className="hover:text-[#FF4500] underline font-bold cursor-pointer text-left focus:outline-none"
+                      title={`View ${shortestBook.Author}'s profile`}
+                    >
+                      {shortestBook.Author}
+                    </button>
                     <span className="font-black bg-white px-1 border border-black">{shortestBook.PageCount} PGS</span>
                   </div>
                 </div>
@@ -252,7 +267,17 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
               <div key={b.BookID} className="flex justify-between items-center gap-4 bg-white border-2 border-black p-2.5 shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
                 <div className="truncate flex-1">
                   <div className="text-xs font-black text-black uppercase truncate">{b.Title}</div>
-                  <div className="text-[10px] font-mono text-gray-800 font-bold">{b.Author}</div>
+                  <div className="text-[10px] font-mono text-gray-800 font-bold">
+                    by{' '}
+                    <button 
+                      type="button" 
+                      onClick={() => onViewAuthor?.(b.Author)} 
+                      className="hover:text-[#FF4500] underline font-bold cursor-pointer text-left focus:outline-none"
+                      title={`View ${b.Author}'s profile`}
+                    >
+                      {b.Author}
+                    </button>
+                  </div>
                 </div>
                 <div className="border border-black bg-[#FFD700] font-mono text-[11px] font-black py-0.5 px-2 rounded-none">
                   {StatsService.formatYear(b.PublishedYear)}

@@ -32,6 +32,7 @@ interface BookDetailPageProps {
   onDeleteBook: (bookId: string) => void;
   onEditBook: (book: Book, genres: { genre: string; isPrimary: boolean }[]) => void;
   taxonomies: TaxonomyLists;
+  onViewAuthor?: (author: string) => void;
 }
 
 export const BookDetailPage: React.FC<BookDetailPageProps> = ({
@@ -41,7 +42,8 @@ export const BookDetailPage: React.FC<BookDetailPageProps> = ({
   onBack,
   onDeleteBook,
   onEditBook,
-  taxonomies
+  taxonomies,
+  onViewAuthor
 }) => {
   const book = books.find(b => b.BookID === bookId);
   if (!book) {
@@ -474,7 +476,15 @@ export const BookDetailPage: React.FC<BookDetailPageProps> = ({
                 </h2>
                 <div className="flex flex-wrap items-center gap-2 mt-3 font-sans font-bold text-base text-gray-700">
                   <User className="w-5 h-5 text-gray-600" />
-                  Written by <span className="text-black text-lg underline font-black">{book.Author}</span> 
+                  Written by{' '}
+                  <button
+                    type="button"
+                    onClick={() => onViewAuthor?.(book.Author)}
+                    className="text-black hover:text-[#FF4500] text-lg underline font-black bg-transparent border-none p-0 cursor-pointer text-left focus:outline-none"
+                    title={`View ${book.Author}'s full profile`}
+                  >
+                    {book.Author}
+                  </button>
                   <span className="text-xs bg-gray-200 text-gray-800 py-0.5 px-2 rounded-full font-mono">{book.AuthorNationality}</span>
                 </div>
               </div>

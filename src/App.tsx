@@ -28,6 +28,7 @@ export default function App() {
   // Nested Sub-routing state (Detail page vs Creation page)
   const [selectedBookID, setSelectedBookID] = useState<string | null>(null);
   const [isAddingBook, setIsAddingBook] = useState<boolean>(false);
+  const [selectedAuthorName, setSelectedAuthorName] = useState<string | null>(null);
 
   // In-memory synced DB records to trigger component rerenders
   const [books, setBooks] = useState<Book[]>([]);
@@ -193,10 +194,18 @@ export default function App() {
   };
 
 
+  const handleViewAuthor = (authorName: string) => {
+    setSelectedAuthorName(authorName);
+    setActiveTab('authors');
+    setSelectedBookID(null);
+    setIsAddingBook(false);
+  };
+
   const changeTab = (tab: string) => {
     setActiveTab(tab);
     setSelectedBookID(null);
     setIsAddingBook(false);
+    setSelectedAuthorName(null);
   };
 
   // Guard Clause: Full screen lock entry gate
@@ -251,6 +260,7 @@ export default function App() {
             onBack={() => setSelectedBookID(null)}
             onDeleteBook={handleDeleteBook}
             onEditBook={handleEditBook}
+            onViewAuthor={handleViewAuthor}
           />
 
         ) : isAddingBook ? (
@@ -273,6 +283,7 @@ export default function App() {
                 bookGenres={bookGenres}
                 onNavigateToLibrary={() => changeTab('library')}
                 onNavigateToAddBook={() => setIsAddingBook(true)}
+                onViewAuthor={handleViewAuthor}
               />
             )}
 
@@ -283,6 +294,7 @@ export default function App() {
                 taxonomies={taxonomies}
                 onViewBook={(id) => setSelectedBookID(id)}
                 onNavigateToAddBook={() => setIsAddingBook(true)}
+                onViewAuthor={handleViewAuthor}
               />
             )}
 
@@ -291,6 +303,8 @@ export default function App() {
                 books={books}
                 bookGenres={bookGenres}
                 onViewBook={(id) => setSelectedBookID(id)}
+                selectedAuthorName={selectedAuthorName}
+                onSelectAuthorName={setSelectedAuthorName}
               />
             )}
 
@@ -300,6 +314,7 @@ export default function App() {
                 bookGenres={bookGenres}
                 onViewBook={(id) => setSelectedBookID(id)}
                 onNavigateToTaxonomies={() => changeTab('taxonomies')}
+                onViewAuthor={handleViewAuthor}
               />
             )}
 

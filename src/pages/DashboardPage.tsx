@@ -27,13 +27,15 @@ interface DashboardPageProps {
   bookGenres: BookGenre[];
   onNavigateToLibrary: () => void;
   onNavigateToAddBook: () => void;
+  onViewAuthor?: (author: string) => void;
 }
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({
   books,
   bookGenres,
   onNavigateToLibrary,
-  onNavigateToAddBook
+  onNavigateToAddBook,
+  onViewAuthor
 }) => {
   const stats = StatsService.computeDashboardStats(books, bookGenres);
 
@@ -233,7 +235,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       </div>
 
       {/* 6. Visual Extras Block */}
-      <VisualExtras books={books} bookGenres={bookGenres} />
+      <VisualExtras books={books} bookGenres={bookGenres} onViewAuthor={onViewAuthor} />
 
     </div>
   );
