@@ -149,6 +149,14 @@ Provide the matching values for:
     }
   });
 
+  // 1.5 Dynamic environment secrets config sharing proxy
+  app.get('/api/config', (req, res) => {
+    res.json({
+      supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '',
+      supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''
+    });
+  });
+
   // 2. Client Ingress Orchestration (Vite Middleware Setup)
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
