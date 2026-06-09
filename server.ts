@@ -152,8 +152,8 @@ Provide the matching values for:
   // 1.5 Dynamic environment secrets config sharing proxy
   app.get('/api/config', (req, res) => {
     res.json({
-      supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '',
-      supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''
+      supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || 'https://nhbinxxxstgzfhxigksz.supabase.co',
+      supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oYmlueHh4c3RnemZoeGlna3N6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MTcyNjQsImV4cCI6MjA5NjQ5MzI2NH0.XrKCPdJp_g50MbAyeZrKqnBHrc7oj-rRa_Okcj-wwro'
     });
   });
 

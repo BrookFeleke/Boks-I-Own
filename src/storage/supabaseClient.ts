@@ -5,10 +5,17 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Read from env or local cache to survive environment gaps
+// Deep fallback default credentials supplied for immediate zero-config connection
+const FALLBACK_URL = 'https://nhbinxxxstgzfhxigksz.supabase.co';
+const FALLBACK_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oYmlueHh4c3RnemZoeGlna3N6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MTcyNjQsImV4cCI6MjA5NjQ5MzI2NH0.XrKCPdJp_g50MbAyeZrKqnBHrc7oj-rRa_Okcj-wwro';
+
+// Read from env, local storage, or use hardcoded persistent fallback
 let rawUrl = (import.meta as any).env?.VITE_SUPABASE_URL || '';
 if (!rawUrl && typeof localStorage !== 'undefined') {
   rawUrl = localStorage.getItem('CUSTOM_SU_URL') || '';
+}
+if (!rawUrl) {
+  rawUrl = FALLBACK_URL;
 }
 
 if (rawUrl) {
@@ -20,6 +27,9 @@ if (rawUrl) {
 let rawKey = ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '').trim();
 if (!rawKey && typeof localStorage !== 'undefined') {
   rawKey = (localStorage.getItem('CUSTOM_SU_KEY') || '').trim();
+}
+if (!rawKey) {
+  rawKey = FALLBACK_KEY;
 }
 
 export let SUPABASE_URL = rawUrl;
