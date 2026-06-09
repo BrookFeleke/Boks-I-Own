@@ -54,12 +54,12 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
 
   // Section options
   const sections: { id: ActiveSection; title: string; icon: any; color: string }[] = [
-    { id: 'identity', title: 'Collection Identity', icon: Heart, color: 'bg-[#FFD700]' },
-    { id: 'history', title: 'Historical Spread', icon: Clock, color: 'font-bold bg-[#FF4500] text-white' },
-    { id: 'genres', title: 'Genre co-occurrence', icon: BarChart3, color: 'bg-[#90EE90]' },
-    { id: 'publishers', title: 'Publisher Ecosystem', icon: Printer, color: 'bg-[#EBF5FB]' },
-    { id: 'physical', title: 'Physical Volumes', icon: Layers, color: 'bg-orange-100' },
-    { id: 'quality', title: 'Catalog Hygiene', icon: CheckSquare, color: 'bg-[#FFF7E8]' }
+    { id: 'identity', title: 'Collection Insights', icon: Heart, color: 'bg-[#FFD700]' },
+    { id: 'history', title: 'Historical Eras', icon: Clock, color: 'font-bold bg-[#FF4500] text-white' },
+    { id: 'genres', title: 'Genre Groupings', icon: BarChart3, color: 'bg-[#90EE90]' },
+    { id: 'publishers', title: 'Publishers & Imprints', icon: Printer, color: 'bg-[#EBF5FB]' },
+    { id: 'physical', title: 'Sizing & Formats', icon: Layers, color: 'bg-orange-100' },
+    { id: 'quality', title: 'Catalog Checklist', icon: CheckSquare, color: 'bg-[#FFF7E8]' }
   ];
 
   return (
@@ -70,14 +70,14 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         <div>
           <h2 className="text-2xl font-black uppercase italic tracking-tight text-black flex items-center gap-2.5">
             <Activity className="w-6 h-6 text-[#FF4500] stroke-[3]" />
-            Deep-Scan Collection Analytics
+            Detailed Collection Analysis
           </h2>
           <p className="text-xs text-black mt-2 max-w-xl font-bold font-mono uppercase tracking-tight">
-            Run automated diagnostics, co-occurrence analysis, pub-year distributions, and physical conservation metrics.
+            Explore deep trends, publication era distributions, genre co-occurrences, and overall catalog health.
           </p>
         </div>
         <div className="font-mono text-xs font-black text-black bg-white border-4 border-black inline-block px-4 py-2 shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
-          REGISTRY STATUS: {books.length} VOLUMES
+          COLLECTION STATUS: {books.length} BOOKS
         </div>
       </div>
 
@@ -112,8 +112,8 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         {activeSection === 'identity' && (
           <div className="space-y-6">
             <div className="border-b-4 border-black pb-3">
-              <h3 className="text-xl font-black uppercase tracking-tight text-black">🧬 CORE COLLECTION IDENTITY PROFILE</h3>
-              <p className="text-[10px] text-[#FF4500] font-mono font-bold uppercase mt-1">Aggregated profiles based on chronological mapping ratios</p>
+              <h3 className="text-xl font-black uppercase tracking-tight text-black">🧬 Core Collection Identity Profile</h3>
+              <p className="text-[10px] text-[#FF4500] font-mono font-bold uppercase mt-1">Overview of your library's distribution and publishing history</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -122,7 +122,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               <div className="border-4 border-black bg-[#FFF7E8] p-5 shadow-[4px_4px_0_0_rgba(0,0,0,1)] space-y-4 rounded-none text-black">
                 <h4 className="text-xs font-mono font-black uppercase text-black border-b-2 border-black pb-1.5 flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4 stroke-[3]" />
-                  COLLECTING CORE FOOTPRINT
+                  COLLECTION FOCUS
                 </h4>
                 <div className="text-xl font-black text-black uppercase tracking-tight">
                   {detailed.eraRatio > 0.5 ? 'Vintage / Classics Dominated' : 'Modernist & Contemporary skew'}
@@ -148,19 +148,19 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               {/* Dominant attributes card */}
               <div className="border-4 border-black bg-white p-5 shadow-[4px_4px_0_0_rgba(0,0,0,1)] space-y-4 rounded-none">
                 <h4 className="text-xs font-mono font-black uppercase text-black border-b-2 border-black pb-1.5">
-                  🌐 GLOBAL & AUTHOR CONCENTRATIONS
+                  🌐 GLOBAL & AUTHOR STATISTICS
                 </h4>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between items-center bg-[#FFF7E8] p-2.5 border-2 border-black">
-                    <span className="font-black text-black uppercase font-mono text-[10px]">Dominant Authority Nationality:</span>
+                    <span className="font-black text-black uppercase font-mono text-[10px]">Most Frequent Author Origin:</span>
                     <strong className="font-mono bg-white border-2 border-black px-2 py-0.5 font-black">{dashboard.topNationality}</strong>
                   </div>
                   <div className="flex justify-between items-center bg-[#FFF7E8] p-2.5 border-2 border-black">
-                    <span className="font-black text-black uppercase font-mono text-[10px]">Dominant Print Publisher:</span>
+                    <span className="font-black text-black uppercase font-mono text-[10px]">Most Common Publisher:</span>
                     <strong className="font-mono bg-white border-2 border-black px-2 py-0.5 font-black">{dashboard.topPublisher}</strong>
                   </div>
                   <div className="flex justify-between items-center bg-[#FFF7E8] p-2.5 border-2 border-black">
-                    <span className="font-black text-black uppercase font-mono text-[10px]">Primary Core Group Category:</span>
+                    <span className="font-black text-black uppercase font-mono text-[10px]">Most Common Genre:</span>
                     <strong className="font-mono bg-white border-2 border-black px-2 py-0.5 font-black">{dashboard.topGenre}</strong>
                   </div>
                 </div>
@@ -169,7 +169,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               {/* Top Represented Authors */}
               <div className="border-4 border-black bg-white p-5 shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:col-span-2 rounded-none">
                 <h4 className="text-xs font-mono font-black uppercase text-black border-b-2 border-black pb-2 mb-3">
-                  ✒️ Highest Represented Authors (Top Concentrations)
+                  ✒️ Most Popular Authors on Your Shelves
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   {detailed.topAuthors.map((auth, idx) => (
@@ -198,8 +198,8 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         {activeSection === 'history' && (
           <div className="space-y-6">
             <div className="border-b-4 border-black pb-3">
-              <h3 className="text-xl font-black uppercase text-gray-950">📅 Historical Spans & Chronological Decades</h3>
-              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Timeline of book creation spans from Classical antiquity to now</p>
+              <h3 className="text-xl font-black uppercase text-gray-950">📅 Publication Dates & Chronology</h3>
+              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Oldest and newest books registered in your collection</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -262,8 +262,8 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         {activeSection === 'genres' && (
           <div className="space-y-6">
             <div className="border-b-4 border-black pb-3">
-              <h3 className="text-xl font-black uppercase text-gray-950">📊 Genre multiplicity & co-occurrence</h3>
-              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Exposing metadata richness of cross-cataloged tags</p>
+              <h3 className="text-xl font-black uppercase text-gray-950">📊 Genre Variety & Categorization</h3>
+              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Details about depth of categorizations on your shelves</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -271,7 +271,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               {/* Deep Tagged Records 3+ genres */}
               <div className="border-3 border-black bg-orange-50 p-5 shadow-[3px_3px_0px_#000000]">
                 <h4 className="text-xs font-mono font-black uppercase text-orange-950 border-b border-black/15 pb-2 mb-3">
-                  🔮 Structurally Rich Nodes (3+ Tags Assigned)
+                  🔮 Highly Categorized Books (3+ Genres)
                 </h4>
                 {detailed.highlyTagged.length > 0 ? (
                   <div className="space-y-2 max-h-[400px] overflow-y-auto">
@@ -280,7 +280,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
                         <div className="flex justify-between items-start gap-4">
                           <strong className="text-xs text-gray-900 uppercase select-all block leading-tight">{b.Title}</strong>
                           <span className="shrink-0 font-mono text-[9px] bg-red-400 border border-black font-black px-1.5 py-0.5 uppercase tracking-wide">
-                            {b.count} genres
+                            {b.count} tags
                           </span>
                         </div>
                         <span className="text-[10px] text-gray-550 block mt-0.5 font-semibold">by {b.Author}</span>
@@ -288,17 +288,17 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-gray-400 italic">No deeply classified nodes with 3 or more genres found.</p>
+                  <p className="text-xs text-gray-400 italic">No books with 3 or more genres found.</p>
                 )}
               </div>
 
               {/* Poor Genre tagging check */}
               <div className="border-3 border-black bg-yellow-50 p-5 shadow-[3px_3px_0px_#000000]">
                 <h4 className="text-xs font-mono font-black uppercase text-gray-700 border-b border-black/15 pb-2 mb-3">
-                  ⚠️ Minimalist Genre Tagging (Missing secondary tags)
+                  ⚠️ Books with Single Genre Tag
                 </h4>
                 <p className="text-[11px] text-gray-600 mb-4 font-semibold leading-relaxed">
-                  These books have only 1 associated primary genre and would benefit from deeper classification categorization inside the Add/Edit form.
+                  These books have only one genre tag and could be tagged more specifically inside the Add/Edit form for richer navigation.
                 </p>
                 
                 <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
@@ -325,8 +325,8 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         {activeSection === 'publishers' && (
           <div className="space-y-6">
             <div className="border-b-4 border-black pb-3">
-              <h3 className="text-xl font-black uppercase text-gray-950">🖨️ Publisher Density & Classics Imprint Ecosystem</h3>
-              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Expose publisher monopoly levels inside your physical repository</p>
+              <h3 className="text-xl font-black uppercase text-gray-950">🖨️ Publishers & Editions</h3>
+              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Overview of print publishers represented in your library</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -334,17 +334,17 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               {/* Density statistics */}
               <div className="border-3 border-black bg-blue-50 p-5 shadow-[3px_3px_0px_#000000] space-y-4">
                 <h4 className="text-xs font-mono font-black uppercase text-blue-900 border-b border-black/20 pb-1">
-                  Concentration & Density Quotient
+                  Classics Imprints Ratio
                 </h4>
                 <div className="text-3xl font-black text-gray-900">
                   {Math.round((detailed.classicsImprintCount / books.length) * 100)}% 
-                  <span className="text-xs font-bold text-gray-500 uppercase ml-2">Classics Bound</span>
+                  <span className="text-xs font-bold text-gray-500 uppercase ml-2">Classics Editions</span>
                 </div>
                 <p className="text-xs text-gray-700 leading-normal font-semibold">
                   Out of your {books.length} volumes, <strong className="text-black">{detailed.classicsImprintCount}</strong> are registered under Penguin, Oxford, Everyman or other prominent Classics series imprints.
                 </p>
                 <div className="bg-white border border-black/10 p-3 text-xs leading-relaxed font-mono mt-2">
-                  * High classics concentration marks a dedication to translated editions, curated introductions, and historical integrity.
+                  * High classics concentration marks a rich dedication to historic editions, curated translations, and classic design.
                 </div>
               </div>
 
@@ -353,10 +353,10 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
                 <div>
                   <h4 className="text-xs font-mono font-black uppercase text-gray-700 border-b border-black/20 pb-1 flex items-center gap-1">
                     <MapPin className="w-4 h-4 text-red-600" />
-                    Publisher Canonical Normalizer
+                    Publisher Name Standardizer
                   </h4>
                   <p className="text-xs text-gray-700 mt-3 leading-relaxed font-semibold">
-                    The software incorporates an automatic publisher name normalizer (e.g. converting <em>&quot;Penguin Books Moscow&quot;</em> to <em>&quot;Penguin&quot;</em>) to avoid messy chart fragmentation.
+                    The bookshelf automatically groups similar publisher names together (for example, combining "Penguin Classics" and "Penguin Paperbacks" to "Penguin") to keep your graphs clean and neat.
                   </p>
                 </div>
                 
@@ -364,7 +364,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
                   onClick={onNavigateToTaxonomies}
                   className="mt-4 w-full bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black py-2 text-xs font-mono font-black uppercase shadow-[2.5px_2.5px_0px_#000] active:translate-y-0.5 cursor-pointer"
                 >
-                  Configure Normalization rules
+                  Manage Publisher Rules
                 </button>
               </div>
 
@@ -378,8 +378,8 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         {activeSection === 'physical' && (
           <div className="space-y-6">
             <div className="border-b-4 border-black pb-3">
-              <h3 className="text-xl font-black uppercase text-gray-950">📐 Physical volumetrics & space size</h3>
-              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Longest, shortest, formats, and physical structural preservation scores</p>
+              <h3 className="text-xl font-black uppercase text-gray-950">📐 Physical Book Formats & Sizes</h3>
+              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Sizing, paperbacks vs hardbacks, and page counts</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -387,7 +387,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               {/* Longest Works */}
               <div className="border-3 border-black bg-orange-50 p-5 shadow-[3px_3px_0px_#000000]">
                 <h4 className="text-xs font-mono font-black uppercase text-orange-950 border-b border-black/15 pb-2 mb-3">
-                  📚 Epic Page length ranking
+                  📚 Epic Page Length Ranking
                 </h4>
                 <div className="space-y-2">
                   {detailed.longestBooks.map(b => (
@@ -406,7 +406,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               {/* Shortest Works */}
               <div className="border-3 border-black bg-[#EBFADF] p-5 shadow-[3px_3px_0px_#000000]">
                 <h4 className="text-xs font-mono font-black uppercase text-emerald-950 border-b border-black/15 pb-2 mb-3">
-                  🕊️ Concise / Shortest volumes ranking
+                  🕊️ Shortest Books
                 </h4>
                 <div className="space-y-2">
                   {detailed.shortestBooks.map(b => (
@@ -432,8 +432,8 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         {activeSection === 'quality' && (
           <div className="space-y-6">
             <div className="border-b-4 border-black pb-3">
-              <h3 className="text-xl font-black uppercase text-gray-950">🔍 Data Gaps & Catalog Hygiene Checklist</h3>
-              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Identifying incomplete records and duplicate database triggers</p>
+              <h3 className="text-xl font-black uppercase text-gray-950">🔍 Book Checklist & Gaps</h3>
+              <p className="text-xs text-gray-500 font-mono font-bold uppercase mt-1">Identifying incomplete records and potential duplicate book names</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -476,7 +476,7 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
               {/* Duplicate Entry Alarm card */}
               <div className="border-3 border-black bg-red-50 p-5 shadow-[3px_3px_0px_#000000]">
                 <h4 className="text-xs font-mono font-black uppercase text-red-950 border-b border-black/20 pb-2 mb-3">
-                  🚨 Duplicate Slot Verification
+                  🚨 Duplicate Entry Check
                 </h4>
                 
                 {detailed.duplicates.length > 0 ? (

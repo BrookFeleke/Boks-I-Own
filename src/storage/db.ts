@@ -6,6 +6,17 @@
 import { LocalDB } from './localStorageAdapter';
 import { SupabaseDB } from './supabaseAdapter';
 import { Book, BookGenre, TaxonomyLists } from '../types';
+import { SEED_BOOKS } from '../data/seedBooks';
+import { SEED_GENRES } from '../data/seedGenres';
+import {
+  GENRES_TAXONOMY,
+  LITERARY_PERIODS_TAXONOMY,
+  PUBLISHERS_TAXONOMY,
+  WORK_TYPES_TAXONOMY,
+  FORMATS_TAXONOMY,
+  CONDITIONS_TAXONOMY,
+  CONTENT_TYPES_TAXONOMY
+} from '../data/taxonomies';
 
 export const CatalogRepo = {
   // Check if Supabase mode is active
@@ -35,25 +46,87 @@ export const CatalogRepo = {
           SupabaseDB.getTaxonomies()
         ]);
         
-        const mergedBooks = cloudBooks || [];
-        const mergedGenres = cloudGenres || [];
-        const mergedTax = cloudTax || local.taxonomies;
+        let mergedBooks = cloudBooks || [];
+        let mergedGenres = cloudGenres || [];
+        let mergedTax = cloudTax || null;
+
+        // AUTOMATED CLOUD SEEDING PIPELINE: If active Supabase cloud connection contains 0 books,
+        // seed it with our rich fallback seed libraries to prevent blank states.
+        if (mergedBooks.length === 0) {
+          console.log('🔄 Detected empty active Supabase library database. Performing automated schema-safe seed...');
+          
+          const booksToSeed = local.books.length > 0 ? local.books : SEED_BOOKS;
+          const genresToSeed = local.genres.length > 0 ? local.genres : SEED_GENRES;
+          const taxToSeed: TaxonomyLists = (local.taxonomies && local.taxonomies.genres && local.taxonomies.genres.length > 0)
+            ? local.taxonomies
+            : {
+                genres: GENRES_TAXONOMY,
+                workTypes: WORK_TYPES_TAXONOMY,
+                literaryPeriods: LITERARY_PERIODS_TAXONOMY,
+                publishers: PUBLISHERS_TAXONOMY,
+                formats: FORMATS_TAXONOMY,
+                conditions: CONDITIONS_TAXONOMY,
+                contentTypes: CONTENT_TYPES_TAXONOMY
+              };
+
+          try {
+            await SupabaseDB.saveBooksBulk(booksToSeed);
+            await SupabaseDB.saveBookGenresBulk(genresToSeed);
+            await SupabaseDB.saveTaxonomy(taxToSeed);
+            
+            mergedBooks = booksToSeed;
+            mergedGenres = genresToSeed;
+            mergedTax = taxToSeed;
+            
+            console.log('✅ Automated cloud database seeding completed successfully.');
+          } catch (seedErr) {
+            console.error('⚠️ Direct automated cloud seeding encountered errors:', seedErr);
+            // Fallback to local
+            mergedBooks = booksToSeed;
+            mergedGenres = genresToSeed;
+            mergedTax = taxToSeed;
+          }
+        }
+
+        const finalTax = mergedTax || local.taxonomies;
         
         // Synchronize local replica with live cloud assets
         localStorage.setItem('books_i_own_books', JSON.stringify(mergedBooks));
         localStorage.setItem('books_i_own_genres', JSON.stringify(mergedGenres));
-        localStorage.setItem('books_i_own_taxonomies', JSON.stringify(mergedTax));
+        localStorage.setItem('books_i_own_taxonomies', JSON.stringify(finalTax));
         
         return {
           books: mergedBooks,
           genres: mergedGenres,
-          taxonomies: mergedTax
+          taxonomies: finalTax
         };
       } catch (err) {
         console.warn('Supabase cloud synchronization deferred. Reading from local cache replica.', err);
       }
     }
     
+    // Fallback if local books are empty for some reason
+    if (local.books.length === 0) {
+      console.log('🔄 Local fallback triggered. Rewriting local cache replica with SEED_BOOKS.');
+      localStorage.setItem('books_i_own_books', JSON.stringify(SEED_BOOKS));
+      localStorage.setItem('books_i_own_genres', JSON.stringify(SEED_GENRES));
+      const initialTaxonomies: TaxonomyLists = {
+        genres: GENRES_TAXONOMY,
+        workTypes: WORK_TYPES_TAXONOMY,
+        literaryPeriods: LITERARY_PERIODS_TAXONOMY,
+        publishers: PUBLISHERS_TAXONOMY,
+        formats: FORMATS_TAXONOMY,
+        conditions: CONDITIONS_TAXONOMY,
+        contentTypes: CONTENT_TYPES_TAXONOMY
+      };
+      localStorage.setItem('books_i_own_taxonomies', JSON.stringify(initialTaxonomies));
+      return {
+        books: SEED_BOOKS,
+        genres: SEED_GENRES,
+        taxonomies: initialTaxonomies
+      };
+    }
+
     return {
       books: local.books,
       genres: local.genres,

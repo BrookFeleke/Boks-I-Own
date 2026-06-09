@@ -66,13 +66,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         
         <div className="max-w-2xl z-10">
           <div className="font-mono text-xs font-black text-white bg-black border-2 border-black inline-block px-3 py-1 uppercase tracking-widest mb-3 shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
-            SYSTEM_STATUS: SECURED
+            PERSONAL COLLECTION
           </div>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic text-black leading-none">
-            ARCHIVE CONTROL CENTER
+            MY BOOKSHELF DASHBOARD
           </h2>
           <p className="text-sm font-bold text-black mt-3 max-w-xl leading-relaxed">
-            Manage, classify, and deep-scan your personal book repository. Reveal hidden chronological patterns, publisher density, and author distributions inside your physical library.
+            A beautiful home for your personal book collection. Track your readings, discover trends across publication eras, and explore the details of every volume on your shelves.
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </div>
           <div className="text-5xl font-black italic tracking-tighter text-black leading-none">{stats.totalBooks}</div>
           <div className="font-mono text-[10px] font-black text-black uppercase mt-2">
-            STABLE ENTRIES
+            BOOKS REGISTERED
           </div>
         </div>
 
@@ -112,11 +112,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         <div className="border-4 border-black bg-[#90EE90] p-5 shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all">
           <div className="flex items-center gap-2 text-black mb-1 opacity-80">
             <CheckCircle className="w-4 h-4 text-black stroke-[3]" />
-            <span className="font-mono text-[10px] font-bold uppercase tracking-wider">Completed Read</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-wider">Completed Reads</span>
           </div>
           <div className="text-5xl font-black italic tracking-tighter text-black leading-none">{stats.booksRead}</div>
           <div className="font-mono text-[10px] font-black text-black uppercase mt-2">
-            {Math.round((stats.booksRead / stats.totalBooks) * 100)}% RATIO READ
+            {Math.round((stats.booksRead / stats.totalBooks) * 100)}% COLLECTION READ
           </div>
         </div>
 
@@ -130,7 +130,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             {stats.totalPages >= 1000 ? `${Math.round(stats.totalPages / 100) / 10}k` : stats.totalPages}
           </div>
           <div className="font-mono text-[10px] font-black text-black uppercase mt-2">
-            VOLUME LENGTHS
+            PAGES ON SHELVES
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </div>
           <div className="text-5xl font-black italic tracking-tighter text-black leading-none">{stats.uniqueAuthors}</div>
           <div className="font-mono text-[10px] font-black text-black uppercase mt-2">
-            {Math.round((stats.totalBooks / stats.uniqueAuthors) * 10) / 10} BOOKS/AUTH
+            {Math.round((stats.totalBooks / stats.uniqueAuthors) * 10) / 10} BOOKS PER AUTHOR
           </div>
         </div>
       </div>
@@ -217,9 +217,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         {/* Chart Card 3: Historical century spread */}
         <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_rgba(0,0,0,1)]">
           <h3 className="text-xl font-black uppercase italic tracking-tight text-black border-b-4 border-black pb-2 mb-4">
-            ⏳ Centurial / Epoch Era Density
+            ⏳ Distribution by Historical Era
           </h3>
-          <RetroBarChart data={centuryDist} valueKey="totalCount" maxItems={8} />
+          <RetroBarChart data={centuryDist} valueKey="count" maxItems={8} />
         </div>
 
         {/* Chart Card 4: Top author nationalities */}

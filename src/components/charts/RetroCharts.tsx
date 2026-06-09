@@ -92,6 +92,7 @@ export const RetroDonutChart: React.FC<DonutChartProps> = ({ data }) => {
             stroke="#ffffff"
             strokeWidth="16"
             className="border-2 stroke-gray-100"
+            pathLength={100}
           />
           {data.map((item, idx) => {
             const count = item.count || 0;
@@ -113,6 +114,7 @@ export const RetroDonutChart: React.FC<DonutChartProps> = ({ data }) => {
                 strokeWidth="16"
                 strokeDasharray={`${strokeDash} ${100 - strokeDash}`}
                 strokeDashoffset={strokeOffset}
+                pathLength={100}
                 className="transition-all duration-500"
                 style={{
                   stroke: getColor(idx),

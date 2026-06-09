@@ -82,7 +82,7 @@ export default function App() {
   // Auth unlock callback
   const handleUnlock = () => {
     setUnlocked(true);
-    triggerToast("🔓 Decentralized Archive Decrypted. Command Center Online.");
+    triggerToast("🔓 Library unlocked successfully.");
   };
 
   // Auth lock callback
@@ -117,12 +117,12 @@ export default function App() {
             }),
             SupabaseDB.saveTaxonomy(freshTax)
           ]);
-          triggerToast("🔄 Local catalog nodes & active Supabase cloud tables successfully reset.");
+          triggerToast("🔄 Library collection and custom settings have been reset.");
         } catch (err) {
           console.error("Cloud database re-seed failed during system reset:", err);
         }
       } else {
-        triggerToast("🔄 System Flushed. Preset catalog nodes successfully reloaded.");
+        triggerToast("🔄 Library reset. Default books have been reloaded.");
       }
       setActiveTab('dashboard');
       setSelectedBookID(null);
@@ -154,7 +154,7 @@ export default function App() {
     document.body.removeChild(link);
     URL.revokeObjectURL(localUrl);
 
-    triggerToast("📥 Archives Exported. Typed JSON compiled and downloaded.");
+    triggerToast("📥 Library collection exported as JSON file.");
   };
 
   // CRUD operation callbacks
@@ -165,13 +165,13 @@ export default function App() {
     // Navigate to see detail of newly logged item
     setSelectedBookID(book.BookID);
     setIsAddingBook(false);
-    triggerToast(`✅ Successfully registered book node: ${book.Title}`);
+    triggerToast(`✅ Book added successfully: ${book.Title}`);
   };
 
   const handleEditBook = async (book: Book, genres: { genre: string; isPrimary: boolean }[]) => {
     await CatalogRepo.saveBook(book, genres);
     syncWithLocalStorage();
-    triggerToast(`💾 Updates committed safely for ${book.Title}`);
+    triggerToast(`💾 Saved updates for ${book.Title}`);
   };
 
   const handleDeleteBook = async (bookId: string) => {
@@ -182,13 +182,13 @@ export default function App() {
     // Navigate back to library catalogue
     setSelectedBookID(null);
     setActiveTab('library');
-    triggerToast(`🗑️ Erased archive record: "${match ? match.Title : bookId}"`);
+    triggerToast(`🗑️ Removed "${match ? match.Title : bookId}" from your collection`);
   };
 
   const handleSaveTaxonomy = async (key: keyof TaxonomyLists, newList: string[]) => {
     await CatalogRepo.saveTaxonomy(key, newList);
     syncWithLocalStorage();
-    triggerToast(`⚙️ Modified reference definitions for ${String(key)}`);
+    triggerToast(`⚙️ Updated custom options for ${String(key)}`);
   };
 
 
@@ -310,15 +310,15 @@ export default function App() {
       <footer className="w-full border-t-4 border-black bg-white p-6 text-center font-mono text-[10px] text-black uppercase font-bold mt-12">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div>
-            © {new Date().getFullYear()} <strong>BOOKS I OWN DATABASE</strong> • COMMAND CENTER V1.02
+            © {new Date().getFullYear()} <strong>BOOKS I OWN</strong> • PERSONAL LIBRARY CATALOG
           </div>
           <div className="flex gap-4 items-center">
-            <span>VAULT ENGINE: {CatalogRepo.isCloudActive() ? 'SUPABASE CLOUD DB' : 'LSTORAGE_B_DB'}</span>
+            <span>STORAGE TYPE: {CatalogRepo.isCloudActive() ? 'SUPABASE CLOUD' : 'LOCAL BROWSER'}</span>
             <span>•</span>
             {CatalogRepo.isCloudActive() ? (
-              <span className="text-black bg-[#90EE90] px-2 py-0.5 border border-black font-black italic">CLOUD_MODE: ONLINE</span>
+              <span className="text-black bg-[#90EE90] px-2 py-0.5 border border-black font-black italic">CLOUD SYNCED</span>
             ) : (
-              <span className="text-[#FF4500] italic">LOCAL_MODE: ACTIVE</span>
+              <span className="text-[#FF4500] italic">OFFLINE MODE</span>
             )}
           </div>
         </div>

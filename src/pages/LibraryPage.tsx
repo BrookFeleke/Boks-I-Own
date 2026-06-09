@@ -134,7 +134,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
           <div className="flex justify-between items-center mb-4 border-b-4 border-black pb-2">
             <h3 className="text-sm font-mono font-black uppercase text-black flex items-center gap-2">
               <Sliders className="w-4 h-4 text-black stroke-[3]" />
-              Filter Archival
+              Filter Books
             </h3>
             {activeFilterCount > 0 && (
               <button
@@ -150,14 +150,14 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
             {/* Filter 1: Content Type */}
             <div>
               <label className="block text-[10px] font-mono font-black uppercase tracking-wider text-black mb-1.5">
-                Content Separation
+                Work Type
               </label>
               <select
                 value={selectedContentType}
                 onChange={e => setSelectedContentType(e.target.value)}
                 className="w-full border-4 border-black bg-white px-2.5 py-1.5 font-mono text-xs font-black rounded-none focus:outline-none focus:bg-[#FFF7E8]"
               >
-                <option value="">-- All content splits --</option>
+                <option value="">-- All book types --</option>
                 {taxonomies.contentTypes.map(c => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -167,14 +167,14 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
             {/* Filter 2: Genres */}
             <div>
               <label className="block text-[10px] font-mono font-black uppercase tracking-wider text-black mb-1.5">
-                Cross Genre Class
+                Book Genre
               </label>
               <select
                 value={selectedGenre}
                 onChange={e => setSelectedGenre(e.target.value)}
                 className="w-full border-4 border-black bg-white px-2.5 py-1.5 font-mono text-xs font-black rounded-none focus:outline-none focus:bg-[#FFF7E8]"
               >
-                <option value="">-- All tag genres --</option>
+                <option value="">-- All genres --</option>
                 {taxonomies.genres.map(g => (
                   <option key={g} value={g}>{g}</option>
                 ))}
@@ -201,7 +201,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
             {/* Filter 4: Publisher */}
             <div>
               <label className="block text-[10px] font-mono font-black uppercase tracking-wider text-black mb-1.5">
-                Imprint Publisher
+                Publisher
               </label>
               <select
                 value={selectedPublisher}
@@ -238,7 +238,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
 
         {/* Short explanation of stable IDs */}
         <div className="bg-[#FFF7E8] border-4 border-black p-4 font-mono text-[10px] text-black leading-normal font-bold shadow-[4px_4px_0_0_rgba(0,0,0,1)] rounded-none">
-          🔒 <strong className="font-black text-[#FF4500]">CRITICAL STANDARD:</strong> Books are cataloged with stable incremental ID slots like <em>B0001, B0002</em> to avoid duplication.
+          📚 <strong className="font-black text-[#FF4500]">CATALOG INDEXING:</strong> Each book is assigned a unique index number (e.g. <em>B0001, B0002</em>) to keep your library organized.
         </div>
       </div>
 

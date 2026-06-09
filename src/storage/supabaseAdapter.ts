@@ -75,6 +75,39 @@ export const SupabaseDB = {
     }
   },
 
+  // Save multiple books in a single bulk upsert
+  async saveBooksBulk(books: Book[]): Promise<void> {
+    if (!isSupabaseConfigured || !supabase) return;
+    if (books.length === 0) return;
+
+    const rows = books.map(book => ({
+      book_id: book.BookID,
+      title: book.Title,
+      author: book.Author,
+      author_nationality: book.AuthorNationality,
+      content_type: book.ContentType,
+      work_type: book.WorkType,
+      literary_period: book.LiteraryPeriod,
+      read_status: book.ReadStatus,
+      format: book.Format,
+      condition: book.Condition,
+      publisher: book.Publisher,
+      published_year: book.PublishedYear,
+      page_count: book.PageCount,
+      purchase_date: book.PurchaseDate,
+      primary_genre: book.PrimaryGenre
+    }));
+
+    const { error } = await supabase
+      .from('books')
+      .upsert(rows);
+
+    if (error) {
+      console.error('Error saving books bulk in Supabase:', error);
+      throw error;
+    }
+  },
+
   // Delete book and dependent cascade records
   async deleteBook(bookId: string): Promise<void> {
     if (!isSupabaseConfigured || !supabase) return;
@@ -140,6 +173,39 @@ export const SupabaseDB = {
     if (insertError) {
       console.error('Error saving genres to Supabase:', insertError);
       throw insertError;
+    }
+  },
+
+  // Save multiple book genres in a single bulk upsert
+  async saveBookGenresBulk(genres: BookGenre[]): Promise<void> {
+    if (!isSupabaseConfigured || !supabase) return;
+    if (genres.length === 0) return;
+
+    const bookIds = Array.from(new Set(genres.map(g => g.BookID)));
+    if (bookIds.length > 0) {
+      const { error: deleteError } = await supabase
+        .from('book_genres')
+        .delete()
+        .in('book_id', bookIds);
+        
+      if (deleteError) {
+        console.warn('Minor warning: bulk delete of book genres for seeding had error:', deleteError);
+      }
+    }
+
+    const rows = genres.map(g => ({
+      book_id: g.BookID,
+      genre: g.Genre,
+      is_primary: g.Primary
+    }));
+
+    const { error } = await supabase
+      .from('book_genres')
+      .insert(rows);
+
+    if (error) {
+      console.error('Error saving book genres bulk in Supabase:', error);
+      throw error;
     }
   },
 

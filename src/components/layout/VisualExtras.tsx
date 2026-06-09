@@ -103,10 +103,10 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
       <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_rgba(0,0,0,1)] flex flex-col justify-between rounded-none">
         <div className="mb-4">
           <div className="font-mono text-[10px] font-black text-[#FF4500] uppercase tracking-widest mb-1">
-            ANALYSIS BLOCK A
+            COLLECTION TRAITS
           </div>
           <h2 className="text-xl font-black uppercase italic tracking-tight text-black border-b-4 border-black pb-2 mb-4">
-            🧬 LIBRARY DNA DETAILS
+            🧬 MY COLLECTION TRAITS
           </h2>
           <div className="space-y-4">
             {dnaTraits.slice(0, 4).map((trait, index) => {
@@ -126,7 +126,7 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
           </div>
         </div>
         <div className="bg-[#F0E68C] p-2 border-2 border-black font-mono text-[10px] text-black font-black uppercase text-center mt-2 rounded-none">
-          TRAITS AGGREGATED FROM CORE FIELDS
+          CALCULATED FROM YOUR ENTIRE COLLECTION
         </div>
       </div>
 
@@ -134,10 +134,10 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
       <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_rgba(0,0,0,1)] flex flex-col justify-between rounded-none">
         <div>
           <div className="font-mono text-[10px] font-black text-[#FF4500] uppercase tracking-widest mb-1">
-            ANALYSIS BLOCK B
+            POPULAR TOPICS
           </div>
           <h2 className="text-xl font-black uppercase italic tracking-tight text-black border-b-4 border-black pb-2 mb-4">
-            🎯 NODE CONCENTRATION
+            🎯 AUTHOR CLUSTERS
           </h2>
           
           {/* Biggest Node cluster */}
@@ -145,11 +145,11 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
             <div className="bg-[#FFD700] border-4 border-black p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)] mb-4 rounded-none">
               <div className="flex items-center gap-2 mb-1">
                 <Compass className="w-5 h-5 text-black stroke-[2.5]" />
-                <span className="font-mono text-[10px] font-black uppercase text-black">Dominant Nationality Anchor</span>
+                <span className="font-mono text-[10px] font-black uppercase text-black">Top Author Origin</span>
               </div>
               <div className="text-xl font-black text-black uppercase italic">{maxNationalityEntry[0]}</div>
               <div className="font-mono text-[10px] mt-1 text-black font-bold">
-                Found {maxNationalityEntry[1]} books representing this cluster in database.
+                You have {maxNationalityEntry[1]} books associated with this region.
               </div>
             </div>
           )}
@@ -177,7 +177,7 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
         <div className="border-t-2 border-black border-dashed pt-4 mt-6">
           <div className="flex justify-between items-center text-xs font-bold text-black uppercase">
             <span>Tag Diversity Index:</span>
-            <span className="font-mono font-black">{Object.keys(genreTotalCounts).length} unique tags</span>
+            <span className="font-mono font-black">{Object.keys(genreTotalCounts).length} unique genres</span>
           </div>
         </div>
       </div>
@@ -186,10 +186,10 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
       <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_rgba(0,0,0,1)] flex flex-col justify-between rounded-none">
         <div>
           <div className="font-mono text-[10px] font-black text-[#FF4500] uppercase tracking-widest mb-1">
-            ANALYSIS BLOCK C
+            PAGE SPECTRUM
           </div>
           <h2 className="text-xl font-black uppercase italic tracking-tight text-black border-b-4 border-black pb-2 mb-4">
-            📏 VOLUMETRIC SPECTRUM
+            📏 BOOK LENGTH SPECTRUM
           </h2>
 
           <div className="space-y-6">
@@ -198,7 +198,7 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1">
                   <Scroll className="w-4 h-4 text-black stroke-[2.5]" />
-                  <span className="text-[10px] font-mono font-black uppercase text-[#1A1A1A]">Longest Work Owned</span>
+                  <span className="text-[10px] font-mono font-black uppercase text-[#1A1A1A]">Longest Book</span>
                 </div>
                 <div className="border-2 border-black bg-[#ADD8E6] p-3 shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
                   <div className="text-xs font-black uppercase truncate text-black">{longestBook.Title}</div>
@@ -215,7 +215,7 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1">
                   <BookOpen className="w-4 h-4 text-black stroke-[2.5]" />
-                  <span className="text-[10px] font-mono font-black uppercase text-[#1A1A1A]">Concise / Shortest Work</span>
+                  <span className="text-[10px] font-mono font-black uppercase text-[#1A1A1A]">Shortest Book</span>
                 </div>
                 <div className="border-2 border-black bg-[#FF7F50] p-3 shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
                   <div className="text-xs font-black uppercase truncate text-black">{shortestBook.Title}</div>
@@ -231,7 +231,7 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
 
         <div className="border-t-2 border-black border-dashed pt-4 mt-6">
           <div className="flex justify-between items-center text-xs font-bold text-black uppercase">
-            <span>Avg library spacing:</span>
+            <span>Average Book Length:</span>
             <span className="font-mono font-black">{avgPages} pgs / book</span>
           </div>
         </div>
@@ -240,10 +240,10 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
       {/* CARD 4: Oldest Shelf Pre-1850 */}
       <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_rgba(0,0,0,1)] rounded-none">
         <div className="font-mono text-[10px] font-black text-[#FF4500] uppercase tracking-widest mb-1">
-          HISTORICAL SHELF
+          LITERARY HISTORY
         </div>
         <h2 className="text-xl font-black uppercase italic tracking-tight text-black border-b-4 border-black pb-2 mb-4">
-          📜 PRE-1850 BINDINGS
+          📜 HISTORICAL CLASSICS (PRE-1850)
         </h2>
         
         {oldestShelf.length > 0 ? (
@@ -268,10 +268,10 @@ export const VisualExtras: React.FC<ExtrasProps> = ({ books, bookGenres }) => {
       {/* CARD 5: Publisher Ecosystem */}
       <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_rgba(0,0,0,1)] col-span-1 md:col-span-2 rounded-none">
         <div className="font-mono text-[10px] font-black text-[#FF4500] uppercase tracking-widest mb-1">
-          PRINT REGISTRY
+          PUBLISHER SUMMARY
         </div>
         <h2 className="text-xl font-black uppercase italic tracking-tight text-black border-b-4 border-black pb-2 mb-4">
-          🖨️ PUBLISHER ECOSYSTEM & IMPRINTS
+          🖨️ IMPRINTS & IMAGES REPRODUCTION
         </h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

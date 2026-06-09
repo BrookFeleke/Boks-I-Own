@@ -51,7 +51,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onUnlock }) => {
             BOOKS I OWN
           </h1>
           <p className="text-[10px] font-mono font-black tracking-widest text-[#FF4500] uppercase mt-3">
-            LIBRARY COMMAND CENTER & CORE ANALYTICS
+            YOUR PERSONAL DIGITAL BOOKSHELF
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onUnlock }) => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <label className="block text-xs font-mono font-black uppercase tracking-wider text-black">
-              Enter Personal Access Key :
+              Enter Personal Password :
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -81,7 +81,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onUnlock }) => {
 
           {error && (
             <div id="login-error" className="border-4 border-black bg-[#FF6347] p-3 text-center rounded-none font-mono text-[11px] font-black text-black animate-pulse uppercase shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
-              ❌ ACCESS KEY REJECTED. CHECK CONFIG.
+              ❌ PASSWORD REJECTED. PLEASE TRY AGAIN.
             </div>
           )}
 
@@ -91,21 +91,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onUnlock }) => {
             className="w-full flex items-center justify-center gap-3 bg-[#FF4500] hover:bg-black hover:text-[#90EE90] active:translate-x-[2px] active:translate-y-[2px] text-white border-4 border-black font-mono font-black text-xs uppercase tracking-widest py-3.5 px-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:shadow-none cursor-pointer transition-all duration-150"
           >
             <ShieldCheck className="w-5 h-5 stroke-[2.5]" />
-            Decrypt & Open Shard
+            Unlock Bookshelf
           </button>
         </form>
 
         {/* Explanatory footer panel in typewriter layout */}
         <div className="mt-8 pt-6 border-t-4 border-black border-dashed flex flex-col gap-2 font-mono text-[10px] text-black leading-relaxed font-bold">
           <div className="flex justify-between">
-            <span>SECURE STACK ID:</span>
-            <span className="text-[#FF4500]">AES-256-SHA-DEMO</span>
+            <span>COLLECTION STATUS:</span>
+            <span className="text-emerald-600 font-black">READY TO BROWSE</span>
           </div>
           <div>
-            * Unlock state caches securely in your local browser sandbox database (`localStorage`). No remote credentials are exchanged.
+            * Your login state is saved in your local browser storage. No data is sent to external servers unless Cloud Sync is configured.
           </div>
           <div className="bg-[#FFF7E8] border-2 border-black p-2.5 text-black font-black mt-2">
-            💡 HINT: ENTER THE ACCESS KEY: <code className="bg-white px-1 leading-none border border-black font-black text-[#FF4500] select-all">change-this-password</code>
+            💡 HINT: ENTER PASSWORD: <code className="bg-white px-1 leading-none border border-black font-black text-[#FF4500] select-all">change-this-password</code>
           </div>
         </div>
       </div>

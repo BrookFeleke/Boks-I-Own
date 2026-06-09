@@ -26,10 +26,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   booksCount
 }) => {
   const tabs = [
-    { id: 'dashboard', label: 'Command Center', icon: BarChart3 },
-    { id: 'library', label: 'My Library', icon: FolderSearch },
-    { id: 'analysis', label: 'Deep Analysis', icon: Database },
-    { id: 'taxonomies', label: 'Taxonomy Settings', icon: Sliders }
+    { id: 'dashboard', label: 'Library Stats', icon: BarChart3 },
+    { id: 'library', label: 'My Bookshelf', icon: FolderSearch },
+    { id: 'analysis', label: 'Reading Trends', icon: Database },
+    { id: 'taxonomies', label: 'Genre & Options', icon: Sliders }
   ];
 
   return (
@@ -46,10 +46,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               Books I Own
             </h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse border border-black" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse border border-black" />
               <span className="text-[10px] font-mono font-black text-black uppercase tracking-wider">
-                {CatalogRepo.isCloudActive() ? 'Cloud DB Active: ' : 'Database Mode: '}
-                <strong className="text-black bg-white px-1 ml-0.5 border border-black">{booksCount} Records</strong>
+                <strong className="text-black bg-white px-1 border border-black">{booksCount} BOOKS</strong>
               </span>
             </div>
           </div>
@@ -111,7 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-2 border-2 border-black bg-[#FF4500] hover:bg-red-600 text-white font-mono text-xs font-black uppercase px-4 py-1.5 shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer"
           >
             <LogOut className="w-4 h-4 stroke-[2.5]" />
-            <span className="hidden sm:inline">LOCK GATE</span>
+            <span className="hidden sm:inline">Lock Library</span>
           </button>
         </div>
 
