@@ -15,6 +15,7 @@ interface NavbarProps {
   onReset: () => void;
   onExport: () => void;
   booksCount: number;
+  dbState: 'pending' | 'connected' | 'error' | 'disconnected';
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -23,7 +24,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLock,
   onReset,
   onExport,
-  booksCount
+  booksCount,
+  dbState
 }) => {
   const tabs = [
     { id: 'dashboard', label: 'Library Stats', icon: BarChart3 },
@@ -46,10 +48,41 @@ export const Navbar: React.FC<NavbarProps> = ({
             <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tighter italic text-black leading-none">
               Books I Own
             </h1>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse border border-black" />
+            <div className="flex flex-wrap items-center gap-1.5 mt-1">
+              {dbState === 'connected' && (
+                <>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse border border-black" title="Connected to Supabase DB" />
+                  <span className="text-[10px] font-mono font-black text-emerald-800 uppercase tracking-wide bg-emerald-100 px-1 border border-black leading-none">
+                    DB ACTIVE
+                  </span>
+                </>
+              )}
+              {dbState === 'pending' && (
+                <>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-bounce border border-black" title="Connecting to Database..." />
+                  <span className="text-[10px] font-mono font-black text-amber-800 uppercase tracking-wide bg-amber-100 px-1 border border-black leading-none">
+                    CONNECTING...
+                  </span>
+                </>
+              )}
+              {dbState === 'error' && (
+                <>
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping border border-black shadow-[1px_1px_0_rgba(0,0,0,1)]" title="Database Connection Failed" />
+                  <span className="text-[10px] font-mono font-black text-white uppercase tracking-wider bg-red-600 px-1 border border-black leading-none animate-pulse">
+                    CONN ERROR
+                  </span>
+                </>
+              )}
+              {dbState === 'disconnected' && (
+                <>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 border border-black" title="Offline Mode (No database keys)" />
+                  <span className="text-[10px] font-mono font-black text-amber-950 uppercase tracking-wide bg-amber-200 px-1 border border-black leading-none">
+                    OFFLINE MODE
+                  </span>
+                </>
+              )}
               <span className="text-[10px] font-mono font-black text-black uppercase tracking-wider">
-                <strong className="text-black bg-white px-1 border border-black">{booksCount} BOOKS</strong>
+                <strong className="text-black bg-white px-1.5 py-0.5 border border-black">{booksCount} BOOKS</strong>
               </span>
             </div>
           </div>

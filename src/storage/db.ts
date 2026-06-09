@@ -18,7 +18,26 @@ import {
   CONTENT_TYPES_TAXONOMY
 } from '../data/taxonomies';
 
+let dbStatus: 'connected' | 'error' | 'disconnected' = 'disconnected';
+let dbErrorMessage: string | null = null;
+
 export const CatalogRepo = {
+  // Get database status
+  getDbStatus(): 'connected' | 'error' | 'disconnected' {
+    if (!SupabaseDB.isEnabled()) {
+      return 'disconnected';
+    }
+    return dbStatus;
+  },
+
+  // Get database connection or query error message
+  getDbErrorMessage(): string | null {
+    if (!SupabaseDB.isEnabled()) {
+      return 'Supabase credentials (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY) are missing in this environment.';
+    }
+    return dbErrorMessage;
+  },
+
   // Check if Supabase mode is active
   isCloudActive(): boolean {
     return SupabaseDB.isEnabled();
@@ -45,6 +64,9 @@ export const CatalogRepo = {
           SupabaseDB.getBookGenres(),
           SupabaseDB.getTaxonomies()
         ]);
+        
+        dbStatus = 'connected';
+        dbErrorMessage = null;
         
         let mergedBooks = cloudBooks || [];
         let mergedGenres = cloudGenres || [];
@@ -100,8 +122,11 @@ export const CatalogRepo = {
           genres: mergedGenres,
           taxonomies: finalTax
         };
-      } catch (err) {
-        console.warn('Supabase cloud synchronization deferred. Reading from local cache replica.', err);
+      } catch (err: any) {
+        dbStatus = 'error';
+        dbErrorMessage = err?.message || String(err);
+        console.error('Supabase cloud synchronization failed. Active issue details:', err);
+        throw err; // Forward error so that client UI is aware of connection loss
       }
     }
     

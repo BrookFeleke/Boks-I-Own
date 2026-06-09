@@ -46,6 +46,15 @@ export default function App() {
   // Toast banner animations state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Connection diagnostics states
+  const [dbState, setDbState] = useState<'pending' | 'connected' | 'error' | 'disconnected'>('pending');
+  const [dbError, setDbError] = useState<string | null>(null);
+  
+  // Custom manual keys input override configuration
+  const [showConfigPanel, setShowConfigPanel] = useState(false);
+  const [customUrl, setCustomUrl] = useState(localStorage.getItem('CUSTOM_SU_URL') || '');
+  const [customKey, setCustomKey] = useState(localStorage.getItem('CUSTOM_SU_KEY') || '');
+
   // Synchronize internal state with LocalStorage cached parameters
   const syncWithLocalStorage = () => {
     const snap = CatalogRepo.getLocalSnapshot();
@@ -55,21 +64,52 @@ export default function App() {
     setUnlocked(snap.unlocked);
   };
 
+  const handleSaveCustomKeys = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (customUrl.trim() && customKey.trim()) {
+      localStorage.setItem('CUSTOM_SU_URL', customUrl.trim());
+      localStorage.setItem('CUSTOM_SU_KEY', customKey.trim());
+      triggerToast("💾 Custom connection secrets saved in browser Cache! Reloading library...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
+    } else {
+      alert("⚠️ Both Database Link and Anon Token are required to override.");
+    }
+  };
+
+  const handleClearCustomKeys = () => {
+    localStorage.removeItem('CUSTOM_SU_URL');
+    localStorage.removeItem('CUSTOM_SU_KEY');
+    triggerToast("🗑️ Custom credentials wiped completely. Reverting back to workspace environment.");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1200);
+  };
+
   useEffect(() => {
     // Initial loading from fast local storage
     syncWithLocalStorage();
 
     // Trigger cloud synchronization in the background if credentials exist
-    if (CatalogRepo.isCloudActive()) {
+    if (!CatalogRepo.isCloudActive()) {
+      setDbState('disconnected');
+      setDbError('Supabase API keys are missing. Configure them in Secrets settings or manual override console below navbar.');
+    } else {
+      setDbState('pending');
       CatalogRepo.fetchAllData()
         .then((cloudData) => {
           setBooks(cloudData.books);
           setBookGenres(cloudData.genres);
           setTaxonomies(cloudData.taxonomies);
+          setDbState('connected');
+          setDbError(null);
           console.log('☁️ Synchronization with active Supabase server established.');
         })
         .catch((err) => {
-          console.warn('⚠️ Cloud sync deferred:', err.message);
+          setDbState('error');
+          setDbError(err?.message || String(err));
+          console.error('⚠️ Supabase cloud synchronization error:', err);
         });
     }
   }, []);
@@ -243,7 +283,102 @@ export default function App() {
         onReset={handleResetDatabase}
         onExport={handleExportJSON}
         booksCount={books.length}
+        dbState={dbState}
       />
+
+      {/* Database Warning Bar */}
+      {dbState !== 'connected' && (
+        <div id="db-warning-bar" className="bg-orange-100 border-b-4 border-black p-4 font-mono text-xs relative z-20">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <span className="text-xl">⚠️</span>
+              <div>
+                <p className="font-black uppercase text-red-700 tracking-tight">
+                  Database Offline: Running on Client Fallback (Local Storage)
+                </p>
+                <p className="text-[#333] mt-1 pr-6 leading-relaxed max-w-4xl">
+                  Your book catalog additions and edits are currently saved locally to this browser partition. 
+                  They will <strong className="font-extrabold uppercase">not</strong> be synced to your global database because:{" "}
+                  <code className="bg-white border border-red-500 rounded px-1 py-0.5 break-all font-black text-xs text-red-600">{dbError || "No connection secrets found"}</code>.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                id="btn-toggle-config-panel"
+                onClick={() => setShowConfigPanel(!showConfigPanel)}
+                className="bg-black text-white hover:bg-neutral-800 border-2 border-black font-mono text-[10px] font-black uppercase tracking-wider px-3 py-1.5 shadow-[2px_2px_0_0_rgb(255,215,0)] hover:shadow-none transition-all cursor-pointer"
+              >
+                {showConfigPanel ? "Close Connection Console" : "Configure Keys Manually 🛠️"}
+              </button>
+            </div>
+          </div>
+
+          {/* Collapsible Connection Console */}
+          {showConfigPanel && (
+            <div id="db-config-panel" className="max-w-xl mx-auto mt-4 p-4 border-4 border-black bg-white shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+              <h3 className="font-black uppercase text-sm border-b-2 border-black pb-1.5 mb-3 flex items-center justify-between">
+                <span>Configure Supabase Connection</span>
+                <span className="text-[10px] bg-yellow-300 text-black px-1.5 border border-black uppercase font-black">Local Override</span>
+              </h3>
+              <p className="text-[10px] text-gray-600 mb-3 leading-tight">
+                If environment variables are missing from your hosting container, you can bypass this by supplying your secrets directly here. Custom credentials will reside strictly inside your private browser storage cache.
+              </p>
+              
+              <form onSubmit={handleSaveCustomKeys} className="space-y-3">
+                <div>
+                  <label className="block text-[10px] uppercase font-black text-neutral-700 mb-1">
+                    Supabase Project API URL (VITE_SUPABASE_URL)
+                  </label>
+                  <input
+                    type="url"
+                    id="input-custom-su-url"
+                    required
+                    placeholder="https://your-project-ref.supabase.co"
+                    value={customUrl}
+                    onChange={(e) => setCustomUrl(e.target.value)}
+                    className="w-full border-2 border-black p-1.5 text-xs font-mono outline-none focus:bg-yellow-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase font-black text-neutral-700 mb-1">
+                    Supabase Anon Publishable Key (VITE_SUPABASE_ANON_KEY)
+                  </label>
+                  <input
+                    type="text"
+                    id="input-custom-su-key"
+                    required
+                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    value={customKey}
+                    onChange={(e) => setCustomKey(e.target.value)}
+                    className="w-full border-2 border-black p-1.5 text-xs font-mono outline-none focus:bg-yellow-50"
+                  />
+                </div>
+                <div className="flex items-center gap-2 pt-1.5">
+                  <button
+                    type="submit"
+                    id="btn-submit-override-keys"
+                    className="bg-emerald-500 hover:bg-emerald-600 text-black font-black uppercase tracking-wider px-4 py-1.5 border-2 border-black text-[10px] shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer"
+                  >
+                    Save & Initialize Connection
+                  </button>
+                  {localStorage.getItem('CUSTOM_SU_URL') && (
+                    <button
+                      type="button"
+                      id="btn-clear-override-keys"
+                      onClick={handleClearCustomKeys}
+                      className="bg-rose-500 hover:bg-rose-600 text-white font-black uppercase tracking-wider px-4 py-1.5 border-2 border-black text-[10px] shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer inline-flex items-center gap-1"
+                    >
+                      Clear Override
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Primary Container Body */}
       <main className="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8 relative z-10">
