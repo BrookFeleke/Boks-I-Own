@@ -149,6 +149,66 @@ Provide the matching values for:
     }
   });
 
+  // 1.6 Dynamic Author Biography Look-up calling Google Gemini
+  app.post('/api/gemini/author', async (req, res) => {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ status: 'error', message: 'Author name is required.' });
+    }
+
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ status: 'error', message: 'API key missing.' });
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
+      const prompt = `Provide literary biography and themes for the author named "${name}". 
+Provide accurate, real historical bibliographic facts. No mock details. Output JSON with:
+- years: (e.g. "1809 – 1865" or "b. 1937" representing birth/death years)
+- about: (professional 2 to 4 sentence summary of life, key impact, and legacy)
+- majorThemes: (string array of 3 to 5 prominent thematic subjects, e.g., ["Existential Realism", "Gothic Fiction"])`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.5-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              years: { type: Type.STRING },
+              about: { type: Type.STRING },
+              majorThemes: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING }
+              }
+            },
+            required: ['years', 'about', 'majorThemes']
+          }
+        }
+      });
+
+      const text = response.text;
+      if (!text) {
+        return res.json({ status: 'no_match' });
+      }
+
+      const parsed = JSON.parse(text);
+      return res.json({
+        status: 'success',
+        years: parsed.years,
+        about: parsed.about,
+        majorThemes: parsed.majorThemes
+      });
+
+    } catch (error: any) {
+      console.warn('Gemini Author query error:', error);
+      return res.status(500).json({ status: 'error', message: error.message || 'Biography generation failed.' });
+    }
+  });
+
   // 1.5 Dynamic environment secrets config sharing proxy
   app.get('/api/config', (req, res) => {
     res.json({

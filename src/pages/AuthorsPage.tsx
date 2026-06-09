@@ -46,6 +46,124 @@ export const AuthorsPage: React.FC<AuthorsPageProps> = ({
   const selectedAuthor = onSelectAuthorName ? selectedAuthorName : localSelectedAuthor;
   const setSelectedAuthor = onSelectAuthorName ? onSelectAuthorName : setLocalSelectedAuthor;
 
+  // Real-time loaded biographies cache
+  const [fetchedBios, setFetchedBios] = useState<Record<string, { years: string; about: string; majorThemes: string[] }>>({});
+  const [loadingBio, setLoadingBio] = useState(false);
+  const [loadingBioError, setLoadingBioError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!selectedAuthor) return;
+    
+    // Check local loaded cache
+    if (fetchedBios[selectedAuthor]) return;
+    
+    // Fast-track seed database elements to save search API calls
+    if (AUTHOR_BIOS[selectedAuthor]) {
+      setFetchedBios(prev => ({
+        ...prev,
+        [selectedAuthor]: {
+          years: AUTHOR_BIOS[selectedAuthor].years,
+          about: AUTHOR_BIOS[selectedAuthor].about,
+          majorThemes: AUTHOR_BIOS[selectedAuthor].majorThemes
+        }
+      }));
+      return;
+    }
+
+    let isConsent = true;
+
+    async function loadAuthorBio() {
+      setLoadingBio(true);
+      setLoadingBioError(null);
+      
+      try {
+        // Attempt 1: Call Google Gemini on Node.js backend
+        const geminiRes = await fetch('/api/gemini/author', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: selectedAuthor })
+        });
+        
+        if (geminiRes.ok) {
+          const parsed = await geminiRes.json();
+          if (parsed.status === 'success' && isConsent) {
+            setFetchedBios(prev => ({
+              ...prev,
+              [selectedAuthor]: {
+                years: parsed.years,
+                about: parsed.about,
+                majorThemes: parsed.majorThemes
+              }
+            }));
+            setLoadingBio(false);
+            return;
+          }
+        }
+      } catch (geminiErr) {
+        console.warn('Gemini endpoint deferred. Checking public fallback library catalogs...', geminiErr);
+      }
+
+      // Attempt 2: Free open-access lookup via OpenLibrary public catalog
+      try {
+        const url = `https://openlibrary.org/search/authors.json?q=${encodeURIComponent(selectedAuthor)}`;
+        const searchRes = await fetch(url);
+        if (searchRes.ok) {
+          const searchData = await searchRes.json();
+          const authorDoc = searchData.docs?.[0];
+          
+          if (authorDoc && authorDoc.key) {
+            const detailRes = await fetch(`https://openlibrary.org/authors/${authorDoc.key}.json`);
+            if (detailRes.ok) {
+              const detailData = await detailRes.json();
+              
+              const birth = detailData.birth_date || authorDoc.birth_date || '';
+              const death = detailData.death_date || authorDoc.death_date || '';
+              const yearsStr = birth ? `${birth}` + (death ? ` – ${death}` : ' – Present') : '';
+              
+              let rawBioText = '';
+              if (detailData.bio) {
+                if (typeof detailData.bio === 'string') {
+                  rawBioText = detailData.bio;
+                } else if (typeof detailData.bio === 'object' && detailData.bio.value) {
+                  rawBioText = detailData.bio.value;
+                }
+              }
+              
+              const topSubjects: string[] = authorDoc.top_subjects || [];
+              const themes = topSubjects.slice(0, 4);
+              
+              if ((rawBioText || yearsStr) && isConsent) {
+                setFetchedBios(prev => ({
+                  ...prev,
+                  [selectedAuthor]: {
+                    years: yearsStr || 'N/A',
+                    about: rawBioText || 'No extensive biography registered on catalog.',
+                    majorThemes: themes.length > 0 ? themes : ['Literature']
+                  }
+                }));
+                setLoadingBio(false);
+                return;
+              }
+            }
+          }
+        }
+      } catch (olErr) {
+        console.warn('OpenLibrary search failure fallback:', olErr);
+      }
+
+      if (isConsent) {
+        setLoadingBioError('Network query deferred. Using procedural biography.');
+        setLoadingBio(false);
+      }
+    }
+    
+    loadAuthorBio();
+
+    return () => {
+      isConsent = false;
+    };
+  }, [selectedAuthor]);
+
   // Helper: group books by author
   const authorGroups = React.useMemo(() => {
     const groups: Record<string, {
@@ -137,7 +255,20 @@ export const AuthorsPage: React.FC<AuthorsPageProps> = ({
   });
 
   // Find the currently selected author record for detail view
-  const activeAuthorDetails = authorsList.find(a => a.name === selectedAuthor);
+  const baseActiveAuthorDetails = authorsList.find(a => a.name === selectedAuthor);
+  const activeAuthorDetails = React.useMemo(() => {
+    if (!baseActiveAuthorDetails) return null;
+    const cache = fetchedBios[baseActiveAuthorDetails.name];
+    if (cache) {
+      return {
+        ...baseActiveAuthorDetails,
+        lifeSpan: cache.years || baseActiveAuthorDetails.lifeSpan,
+        bioText: cache.about || baseActiveAuthorDetails.bioText,
+        themes: cache.majorThemes || baseActiveAuthorDetails.themes
+      };
+    }
+    return baseActiveAuthorDetails;
+  }, [baseActiveAuthorDetails, fetchedBios]);
 
   // Generate a procedural bio paragraph for fallback if no static bio exists
   const getProceduralBio = (author: typeof authorsList[0]) => {
@@ -255,13 +386,32 @@ export const AuthorsPage: React.FC<AuthorsPageProps> = ({
                 <h3 className="text-sm font-mono font-black uppercase text-black border-b-4 border-black pb-2 mb-4">
                   Biography & Summary
                 </h3>
-                <p className="text-gray-900 leading-relaxed text-sm font-medium">
-                  {activeAuthorDetails.bioText || getProceduralBio(activeAuthorDetails)}
-                </p>
+                {loadingBio ? (
+                  <div className="flex flex-col items-center justify-center py-10 space-y-3 font-mono border-2 border-dashed border-black bg-amber-50">
+                    <span className="text-3xl animate-spin">🌀</span>
+                    <p className="text-xs font-black uppercase tracking-wider text-black animate-pulse">
+                      Searching literary indexes in real-time...
+                    </p>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase">
+                      Gathering authentic author archives & themes...
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-gray-900 leading-relaxed text-sm font-medium">
+                      {activeAuthorDetails ? (activeAuthorDetails.bioText || getProceduralBio(activeAuthorDetails)) : ''}
+                    </p>
+                    {loadingBioError && (
+                      <p className="text-[10px] font-mono text-red-600 font-bold uppercase mt-2.5">
+                        ⚠️ {loadingBioError}
+                      </p>
+                    )}
+                  </>
+                )}
                 
                 {/* Visual quote stamp */}
                 <div className="bg-[#FFF7E8] border border-black p-4 text-[11px] font-mono leading-relaxed mt-6 italic font-bold">
-                  * Core metadata compiled from your library holdings, spanning publication years from {StatsService.formatYear(activeAuthorDetails.eraMin)} to {StatsService.formatYear(activeAuthorDetails.eraMax)}.
+                  * Core metadata compiled from your library holdings, spanning publication years from {StatsService.formatYear(activeAuthorDetails?.eraMin || 0)} to {StatsService.formatYear(activeAuthorDetails?.eraMax || 0)}.
                 </div>
               </div>
 
