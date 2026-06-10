@@ -387,5 +387,181 @@ export const StatsService = {
         missingPrimaryGenre
       }
     };
+  },
+
+  /**
+   * Calculates Pearson Correlation (r) and linear regression parameters between PublishedYear and PageCount
+   */
+  getYearPageCorrelation(books: Book[]) {
+    // Filter out unrepresentative page counts
+    const validBooks = books.filter(b => b.PublishedYear && b.PageCount && b.PageCount > 5);
+    const n = validBooks.length;
+    if (n < 2) {
+      return { r: 0, slope: 0, intercept: 0, classification: 'Insufficient points' };
+    }
+
+    let sumX = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumXX = 0;
+    let sumYY = 0;
+
+    validBooks.forEach(b => {
+      const x = b.PublishedYear;
+      const y = b.PageCount;
+      sumX += x;
+      sumY += y;
+      sumXY += x * y;
+      sumXX += x * x;
+      sumYY += y * y;
+    });
+
+    const numerator = n * sumXY - sumX * sumY;
+    const denomX = n * sumXX - sumX * sumX;
+    const denomY = n * sumYY - sumY * sumY;
+    const denominator = Math.sqrt(denomX * denomY);
+
+    const r = denominator === 0 ? 0 : numerator / denominator;
+    const slope = denomX === 0 ? 0 : numerator / denomX;
+    const intercept = (sumY - slope * sumX) / n;
+
+    let classification = 'Uncorrelated';
+    const absR = Math.abs(r);
+    if (absR >= 0.7) {
+      classification = r > 0 ? 'Strong Positive Timeline Expansion' : 'Strong Negative Modern Condensation';
+    } else if (absR >= 0.4) {
+      classification = r > 0 ? 'Moderate Positive Expansion' : 'Moderate Negative Condensation';
+    } else if (absR >= 0.1) {
+      classification = r > 0 ? 'Weak Positive Skew' : 'Weak Negative Skew';
+    } else {
+      classification = 'Negligible Linear Dependency';
+    }
+
+    return {
+      r: parseFloat(r.toFixed(4)),
+      slope: parseFloat(slope.toFixed(4)),
+      intercept: parseFloat(intercept.toFixed(4)),
+      classification,
+      pointsCount: n
+    };
+  },
+
+  /**
+   * Computes the Gini Impurity Coefficient representing genre variety and concentration.
+   * Gini index is: 1 - sum(p_i^2). Closer to 1 is highly diversified, closer to 0 is fully concentrated.
+   */
+  getGenreGiniEntropy(books: Book[]) {
+    const total = books.length;
+    if (total === 0) return { gini: 0, classification: 'No records' };
+
+    const genreCounts: Record<string, number> = {};
+    books.forEach(b => {
+      const g = b.PrimaryGenre || 'Unassigned';
+      genreCounts[g] = (genreCounts[g] || 0) + 1;
+    });
+
+    let sumSquares = 0;
+    Object.values(genreCounts).forEach(count => {
+      const p = count / total;
+      sumSquares += p * p;
+    });
+
+    const gini = 1 - sumSquares;
+    let classification = '';
+    if (gini < 0.3) {
+      classification = 'Laser-Focused Specialist' + ' (Highly specialized single-cohort preference)';
+    } else if (gini <= 0.65) {
+      classification = 'Segmented Aficionado (Targeted focus across 2-3 prominent fields)';
+    } else {
+      classification = 'Renaissance Polymath (Broadly diversified multi-subject reader)';
+    }
+
+    return {
+      gini: parseFloat(gini.toFixed(3)),
+      classification,
+      uniqueCount: Object.keys(genreCounts).length
+    };
+  },
+
+  /**
+   * Computes Pivot Table matrix cross-tabulation for any two categorical factors.
+   */
+  getPivotMatrix(books: Book[], xAxisKey: keyof Book, yAxisKey: keyof Book) {
+    // Collect all unique values of x and y
+    const xValuesSet = new Set<string>();
+    const yValuesSet = new Set<string>();
+
+    books.forEach(b => {
+      xValuesSet.add(String(b[xAxisKey] || 'N/A'));
+      yValuesSet.add(String(b[yAxisKey] || 'N/A'));
+    });
+
+    const xAxisLabels = Array.from(xValuesSet).sort();
+    const yAxisLabels = Array.from(yValuesSet).sort();
+
+    // Map counts
+    const counts: Record<string, Record<string, number>> = {};
+    const xTotals: Record<string, number> = {};
+    const yTotals: Record<string, number> = {};
+    let grandTotal = 0;
+
+    xAxisLabels.forEach(x => {
+      counts[x] = {};
+      xTotals[x] = 0;
+      yAxisLabels.forEach(y => {
+        counts[x][y] = 0;
+        yTotals[y] = 0;
+      });
+    });
+
+    books.forEach(b => {
+      const x = String(b[xAxisKey] || 'N/A');
+      const y = String(b[yAxisKey] || 'N/A');
+      counts[x][y] = (counts[x][y] || 0) + 1;
+      xTotals[x] = (xTotals[x] || 0) + 1;
+      yTotals[y] = (yTotals[y] || 0) + 1;
+      grandTotal++;
+    });
+
+    return {
+      xAxisLabels,
+      yAxisLabels,
+      matrix: counts,
+      xTotals,
+      yTotals,
+      grandTotal
+    };
+  },
+
+  /**
+   * Computes page count histograms buckets
+   */
+  getPageCountDensity(books: Book[]) {
+    const buckets = [
+      { id: 'pocket', label: 'Brief / Pocket (<200 p)', min: 0, max: 200, count: 0, books: [] as Book[] },
+      { id: 'standard', label: 'Standard Novel (200-399 p)', min: 201, max: 400, count: 0, books: [] as Book[] },
+      { id: 'extensive', label: 'Extensive Tome (400-599 p)', min: 401, max: 600, count: 0, books: [] as Book[] },
+      { id: 'epic', label: 'Monumental Epic (600+ p)', min: 601, max: 99999, count: 0, books: [] as Book[] }
+    ];
+
+    books.forEach(b => {
+      const p = b.PageCount || 0;
+      const bin = buckets.find(bucket => p >= bucket.min && p <= bucket.max);
+      if (bin) {
+        bin.count++;
+        bin.books.push(b);
+      } else if (p > 600) {
+        buckets[3].count++;
+        buckets[3].books.push(b);
+      } else {
+        buckets[0].count++;
+        buckets[0].books.push(b);
+      }
+    });
+
+    return buckets.map(b => ({
+      ...b,
+      percentage: books.length > 0 ? Math.round((b.count / books.length) * 100) : 0
+    }));
   }
 };
