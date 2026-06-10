@@ -49,6 +49,9 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
   // Interactive Scatter hover reference
   const [hoveredCircle, setHoveredCircle] = useState<Book | null>(null);
 
+  // Volumetric Histogram state
+  const [selectedHistBin, setSelectedHistBin] = useState<string | null>(null);
+
   const detailed = StatsService.getDetailedAnalysis(books, bookGenres);
   const dashboard = StatsService.computeDashboardStats(books, bookGenres);
 
@@ -890,7 +893,6 @@ export const AnalysisPage: React.FC<AnalysisPageProps> = ({
         {activeSection === 'science' && (() => {
           const giniStats = StatsService.getGenreGiniEntropy(books);
           const histogramBuckets = StatsService.getPageCountDensity(books);
-          const [selectedHistBin, setSelectedHistBin] = useState<string | null>(null);
 
           return (
             <div className="space-y-8 animate-fade-in text-black">
